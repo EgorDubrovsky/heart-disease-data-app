@@ -8,6 +8,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.metrics import log_loss, ConfusionMatrixDisplay, recall_score, precision_score
 from sklearn.preprocessing import StandardScaler
 from messages import msg
+from viz import visualize
 import dalex as dx
 import pickle
 
@@ -104,36 +105,53 @@ with tab_data:
     st.write(msg.FILTERED_DATASET_TITLE)
     st.write(msg.FITERED_DATASET_MSG)
     
-    if diagnosis:
+    if filtered_df.shape[0]:
         st.dataframe(filtered_df)
     else:
         st.write(msg.EMPTY_FILTER_ERROR)
 
     # Individual distributions
-    HIST_REQUIRED = ('age', 'trestbps', 'chol', 'thalach', 'oldpeak')
+    CONTINUOUS = ('age', 'trestbps', 'chol', 'thalach', 'oldpeak') # These features will need a histogram
     st.write(msg.FEATURE_DISTRIBUTION_TITLE)
     st.write(msg.FEATURE_DISTRIBUTION_MSG)
-    if diagnosis:
+
+    if filtered_df.shape[0]:
         feature_name = st.selectbox("Select Feature", df.columns)
-        fig, ax = plt.subplots()
-        ax.set_axisbelow(True)
-        ax.grid()
-        ax.set_xlabel(feature_name)
-        ax.set_ylabel('Frequency')
-        ax.set_title('Distribution of feature ' + feature_name)
-        if feature_name == 'PhysHlth' or feature_name == 'MentHlth':
-            plt.xticks(rotation=90)
-        if feature_name in HIST_REQUIRED:
-            ax.hist(filtered_df[feature_name], bins=30, color='skyblue', edgecolor='black')
+        if feature_name in CONTINUOUS:
+            st.pyplot(visualize().continuous_distr(filtered_df, feature_name))
         else:
-            ax.bar(np.vectorize(lambda x: str(int(x)))(np.unique(filtered_df[feature_name])), 
-                np.unique(filtered_df[feature_name], return_counts=True)[1], edgecolor='black',
-                color='skyblue')
-        st.pyplot(fig)
+            st.pyplot(visualize().categorical_distr(filtered_df, feature_name))
     else:
         st.write(msg.EMPTY_FILTER_ERROR)
 
-# TODO: add correlations
+    # Mutual distributions
+    st.write(msg.FEATURE_CORRELATION_TITLE)
+    st.write(msg.FEATURE_CORRELATION_MSG)
+    if filtered_df.shape[0]:
+        feature1_name = st.selectbox("Select Feature 1", df.columns, index=0)
+        feature2_name = st.selectbox("Select Feature 2", df.columns, index=1)
+
+        # If names are equal - just put out the marginal distribution
+        if feature1_name == feature2_name: 
+            if feature1_name in CONTINUOUS:
+                st.pyplot(visualize().continuous_distr(filtered_df, feature1_name))
+            else:
+                st.pyplot(visualize().categorical_distr(filtered_df, feature1_name))
+        # If names are not equal - several options
+        else:
+            # Both features continuous -> show scatterplot
+            if feature1_name in CONTINUOUS and feature2_name in CONTINUOUS:
+                st.pyplot(visualize().scatterplot(filtered_df, feature1_name, feature2_name))
+            # One continuous, one categorical -> show boxplot
+            elif feature1_name in CONTINUOUS:
+                st.pyplot(visualize().boxplot(filtered_df, feature1_name, feature2_name))
+            elif feature2_name in CONTINUOUS:
+                st.pyplot(visualize().boxplot(filtered_df, feature2_name, feature1_name))
+            # Both features categorical -> show heatmap?
+            else:
+                st.pyplot(visualize().heatmap(filtered_df, feature1_name, feature2_name))
+    else:
+        st.write(msg.EMPTY_FILTER_ERROR)
 
 # ==================
 # === MODELS TAB ===

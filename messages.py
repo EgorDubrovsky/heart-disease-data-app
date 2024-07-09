@@ -8,6 +8,7 @@ class msg():
     FULL_DATASET_TITLE = '### Cleveland Heart Disease Dataset (full)'
     FILTERED_DATASET_TITLE = '### Cleveland Heart Disease Dataset (filtered)'
     FEATURE_DISTRIBUTION_TITLE = '### Individual Feature Distributions (filtered)'
+    FEATURE_CORRELATION_TITLE = '### Pairwise Feature Distributions (filtered)'
     MODEL_DUMMY_TITLE = '### Dummy Model'
     PERFOMANCE_DUMMY_TITLE = '#### 🐌 Dummy Model Perfomance'
     MODEL_LOGREG_TITLE = '### Simple Logistic Regression'
@@ -24,8 +25,10 @@ class msg():
     # Text snippets
     SELECT_FEATURE_MSG = 'Select the feature you would like to know more about!'
     FULL_DATASET_MSG = 'Here you can see the entire dataset, unaffected by filters.'
-    FITERED_DATASET_MSG = 'Adjust the filters on the sidebar to see how the dataset changes.'
+    FITERED_DATASET_MSG = 'Adjust the filters on the sidebar to see how the dataset changes. This dataset also has no missing values, \
+                           since rows with them have been removed.'
     FEATURE_DISTRIBUTION_MSG = 'Select the feature to see their distribution. You can also interact with the filters to get more specific distributions.'
+    FEATURE_CORRELATION_MSG = 'Select a pair of features to see their mutual distribution. Filters affect this too!'
     LOGREG_TRAIN_MSG = '👇 Click the button to train a logistic regression model'
     FOREST_TRAIN_MSG = '👇 Click the button to train a random forest model'
     BOOST_TRAIN_MSG = '👇 Click the button to train a gradient boosting model'
