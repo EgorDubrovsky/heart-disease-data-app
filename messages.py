@@ -15,7 +15,9 @@ class msg():
     MODEL_FOREST_TITLE = 'Random Forest'
     MODEL_BOOST_TITLE = '### Gradient Boosting'
     FAIRNESS_LOGREG_TITLE = '### Fairness Metrics for Logistic Regression'
-    FAIRNESS_MOD_TITLE = '###  Modified Fairness Metrics for Logistic Regression'
+    FAIRNESS_RF_TITLE = '### Fairness Metrics for Random Forest'
+    FAIRNESS_MOD_LR_TITLE = '###  Modified Fairness Metrics for Logistic Regression'
+    FAIRNESS_MOD_RF_TITLE = '###  Modified Fairness Metrics for Random Forest'
     FAIRNESS_DISCUSS_TITLE = '### Discussion'
     XAI_LOGREG_TITLE = '### Explaining Logistic Regression'
     XAI_BOOST_TITLE = '### Explaining Gradient Boosting'
@@ -36,8 +38,10 @@ class msg():
     FOREST_TRAIN_MSG = '👇 Click the button to train a random forest model'
     BOOST_TRAIN_MSG = '👇 Click the button to train a gradient boosting model'
     FOREST_HYPERPARAMS_MSG = '🔧 You can adjust the model\'s hyperparameters with the options below'
-    FAIRNESS_LOGREG_MSG = 'First off, let\'s see the fairness metrics for the simple log resgression model.'
-    FAIRNESS_MOD_MSG = 'To mitigate differences in metrics, we can try to remove the *Sex* feature from the training dataset. Here are the results.'
+    FAIRNESS_LOGREG_MSG = 'First off, let\'s see the fairness metrics for Logistic Regression model.'
+    FAIRNESS_RF_MSG = 'Now, let\'s see the fairness metrics for the Random Forest model.'
+    FAIRNESS_MOD_LR_MSG = 'To mitigate differences in metrics, we can try to remove the *Sex* feature from the training dataset of Logistic Regression Model. Here are the results.'
+    FAIRNESS_MOD_RF_MSG = 'Similar to Logistic Regression, In order to mitigate differences in metrics, we can try to remove the *Sex* feature from the training dataset of Random Forest Model. Here are the results.'
 
     # Longtexts
     APP_DESCRIPTION = 'This app provides an outlook on Cleveland Heart Disease dataset. \
@@ -59,10 +63,9 @@ class msg():
     MODEL_FOREST_DESCRIPTION = 'Random forest is a more advanced classification model which consists of many smaller models called decision trees. \
                                 Will it be any better than the more shallow models?'
     FAIRNESS_DESCRIPTION = ['On this tab you can explore different metrics associated with gender fairness, \
-                            and see how fairly our models fare.', 'Yes, that was a pun.', 'No, I\'m not sorry.'
-                           ]
-    FAIRNESS_DISCUSSION = 'In reality, it makes little to no sense to assess the Group Fairness metric, since the frequency of diabetes \
-                           is inherently different in men and women. On th other hand, metrics such as Predictive Parity or FPR Balance \
+                            and see how fairly our models fare.']
+    FAIRNESS_DISCUSSION = 'In reality, it makes little to no sense to assess the Group Fairness metric, since the frequency of heart disease \
+                           is inherently different in men and women. On th other hand, metrics such as Positively Predicted Value or False Positive Rate \
                            are useful, since they show us if the model makes the same amount of mistakes on men and women.'
     XAI_DESCRIPTION = 'Perhaps you are wondering "How do the models make decisions?" There are a lot of ways of gaining deeper \
                        understanding: sometimes models are inherently explainable, and sometimes we need advanced explanation techniques. \
@@ -145,3 +148,13 @@ class msg():
 
     # Miscellaneous
     SEPARATOR = '_' * 15
+
+    # Fairnes metrics
+    FF_METRIC_1 = "Probability of Positively Predicted Females with Heart Disease"
+    FF_METRIC_2 = "Probability of Positively Predicted Males with Heart Disease"
+    FF_METRIC_3 = "Probability of Positively Predicted Diabetic Females with Heart Disease"
+    FF_METRIC_4 = "Probability of Positively Predicted Diabetic Males with Heart Disease"
+    FF_METRIC_5 = "Positive Predictive Value of Females with Heart Disease"
+    FF_METRIC_6 = "Positive Predictive Value of Males with Heart Disease"
+    FF_METRIC_7 = "False Positive Rate of Females with Heart Disease"
+    FF_METRIC_8 = "False Positive Rate of Males with Heart Disease"
