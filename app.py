@@ -8,12 +8,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, roc_auc_score, roc_curve, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from messages import msg
-import dalex as dx
-import pickle
 from sklearn.metrics import classification_report
 import shap
 from explainerdashboard import ClassifierExplainer
 from viz import visualize
+import fairness_functions as ff
 
 viz = visualize()
 
@@ -271,3 +270,74 @@ with tab_xai:
 # ====================
 # === FAIRNESS TAB ===
 # ====================
+pred_df = df.copy() 
+X = df.drop("num", axis=1)
+pred_df["prediction_lr"] = lr_model.predict(X)
+pred_df["prediction_rf"] = rf_model.predict(X)
+
+with tab_fairness:
+    for line in msg.FAIRNESS_DESCRIPTION:
+        st.write(line)
+
+    st.write(msg.FAIRNESS_LOGREG_TITLE)
+    st.write(msg.FAIRNESS_LOGREG_MSG)
+    pf = ff.group_fairness(pred_df, 'sex', 0, 'prediction_lr', 1)
+    pm = ff.group_fairness(pred_df, 'sex', 1, 'prediction_lr', 1)
+    pfs = ff.conditional_statistical_parity(pred_df, "sex", 0, "prediction_lr", 1, "fbs", 1)
+    pms = ff.conditional_statistical_parity(pred_df, "sex", 1, "prediction_lr", 1, "fbs", 1)
+    ppvf = ff.predictive_parity(pred_df, "sex", 0, "prediction_lr", "num")
+    ppvm = ff.predictive_parity(pred_df, "sex", 1, "prediction_lr", "num")
+    fprf = ff.fp_error_rate_balance(pred_df, "sex", 0, "prediction_lr", "num")
+    fprm = ff.fp_error_rate_balance(pred_df, "sex", 1, "prediction_lr", "num")
+
+    fairness_metrics_lr = {
+    "No.": range(1, 9),
+    "Metric": [
+        msg.FF_METRIC_1,
+        msg.FF_METRIC_2,
+        msg.FF_METRIC_3,
+        msg.FF_METRIC_4,
+        msg.FF_METRIC_5,
+        msg.FF_METRIC_6,
+        msg.FF_METRIC_7,
+        msg.FF_METRIC_8
+    ],
+    "Value": [pf, pm, pfs, pms, ppvf, ppvm, fprf, fprm]
+    }
+
+    fairness_df_lr = pd.DataFrame(fairness_metrics_lr)
+    fairness_df_lr = fairness_df_lr.set_index('No.')
+    st.dataframe(fairness_df_lr)
+
+    st.write(msg.FAIRNESS_RF_TITLE)
+    st.write(msg.FAIRNESS_RF_MSG)
+    pf = ff.group_fairness(pred_df, 'sex', 0, 'prediction_rf', 1)
+    pm = ff.group_fairness(pred_df, 'sex', 1, 'prediction_rf', 1)
+    pfs = ff.conditional_statistical_parity(pred_df, "sex", 0, "prediction_rf", 1, "fbs", 1)
+    pms = ff.conditional_statistical_parity(pred_df, "sex", 1, "prediction_rf", 1, "fbs", 1)
+    ppvf = ff.predictive_parity(pred_df, "sex", 0, "prediction_rf", "num")
+    ppvm = ff.predictive_parity(pred_df, "sex", 1, "prediction_rf", "num")
+    fprf = ff.fp_error_rate_balance(pred_df, "sex", 0, "prediction_rf", "num")
+    fprm = ff.fp_error_rate_balance(pred_df, "sex", 1, "prediction_rf", "num")
+
+    fairness_metrics_rf = {
+    "No.": range(1, 9),
+    "Metric": [
+        msg.FF_METRIC_1,
+        msg.FF_METRIC_2,
+        msg.FF_METRIC_3,
+        msg.FF_METRIC_4,
+        msg.FF_METRIC_5,
+        msg.FF_METRIC_6,
+        msg.FF_METRIC_7,
+        msg.FF_METRIC_8
+    ],
+    "Value": [pf, pm, pfs, pms, ppvf, ppvm, fprf, fprm]
+    }
+
+    fairness_df_rf = pd.DataFrame(fairness_metrics_rf)
+    fairness_df_rf = fairness_df_rf.set_index('No.')
+    st.dataframe(fairness_df_rf)
+
+    st.write(msg.FAIRNESS_DISCUSS_TITLE)
+    st.write(msg.FAIRNESS_DISCUSSION)
