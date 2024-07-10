@@ -29,6 +29,7 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Data load
 df_raw = pd.read_csv(DATA_PATH)  # This has all rows
+df_raw['num'] = df_raw['num'].apply(lambda x: 1 if x > 0 else x)
 df = df_raw.dropna()  # This has no rows with missing values
 
 # Header
@@ -90,9 +91,8 @@ sidebar.header(msg.DATA_DESCRIPTION_TITLE)
 for line in msg.DATASET_DESCRIPTION:
     sidebar.write(line)
 
-# Preprocess the new dataset
-X_new = df.drop("num", axis=1)  # Replace 'target_column' with the actual target column name
-y_new = df["num"]  # Replace 'target_column' with the actual target column name
+X_new = df.drop("num", axis=1)
+y_new = df["num"]
 X_train_new, X_test_new, y_train_new, y_test_new = train_test_split(X_new, y_new, test_size=0.2, random_state=123,
                                                                     stratify=y_new)
 
