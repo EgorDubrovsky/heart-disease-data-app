@@ -1,4 +1,9 @@
-Instructions:
+## Requirements
+
+- python version 3.11
+
+
+## Instructions
 
 1. Navigate to this folder
 
