@@ -46,20 +46,15 @@ class msg():
                            '*Purpose of creation*:',
                            '*Data collection method*:']
     MODELS_DESCRIPTION = ['On this tab you can explore the work of diffrent classification models which predict \
-                          the person\'s health status.', '❗**IMPORTANT**❗: for simplicity, we combine labels 1 \
-                          (prediabetes) and 2 (diabetes) together. This allows for the simpler binary \
+                          whether a patient is likely to have a heart disease', '❗**IMPORTANT**❗: for simplicity, we combine labels 1 to 4 \
+                          together. This allows for the simpler binary \
                           classification and more interpretable metrics.', '❗**IMPORTANT**❗: data will **not** \
                           be filtered for training the models.'
                           ]
-    MODEL_DUMMY_DESCRIPTION = 'Let\'s consider a trivial model which *labels all people as healthy*. \
-                               While being useless on its own, it may be useful to compare its stats \
-                               to smarter models (to see if they really are as smart as we think...)'
     MODEL_LOGREG_DESCRIPTION = 'Logistic regression is a simple classifier and one of the most iconic and used machine learning algorithms. \
                                 Let\'s see how it tries to build predictions for our dataset.'
     MODEL_FOREST_DESCRIPTION = 'Random forest is a more advanced classification model which consists of many smaller models called decision trees. \
                                 Will it be any better than the more shallow models?'
-    MODEL_BOOST_DESCRIPTION = 'Finally, we can try gradient boosting - arguably the best-performing classification model (excluding \
-                               neural networks, of course). Let\'s try feeding our dataset to it!'
     FAIRNESS_DESCRIPTION = ['On this tab you can explore different metrics associated with gender fairness, \
                             and see how fairly our models fare.', 'Yes, that was a pun.', 'No, I\'m not sorry.'
                            ]

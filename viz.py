@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 import seaborn as sns
+from sklearn.metrics import classification_report, roc_auc_score, roc_curve, confusion_matrix
+
 
 class visualize():
     def categorical_distr(self, df, feature):
@@ -59,3 +61,28 @@ class visualize():
         #ax.imshow(to_plot)
         #ax.scatter(df[feature1], df[feature2], color='skyblue', edgecolor='black')
         return fig
+    
+    def plot_auroc(self, model, X_test, y_test, model_name):
+        y_proba = model.predict_proba(X_test)[:, 1]
+        fpr, tpr, thresholds = roc_curve(y_test, y_proba)
+        auc_score = roc_auc_score(y_test, y_proba)
+
+        plt.figure(figsize=(8, 6))
+        plt.plot(fpr, tpr, label=f'{model_name} (AUC = {auc_score:.2f})')
+        plt.plot([0, 1], [0, 1], 'k--')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title(f'AUROC Curve for {model_name}')
+        plt.legend(loc='lower right')
+        plt.grid()
+        plt.show()
+    
+    # Function to plot confusion matrix
+    def plot_confusion_matrix(self, y_true, y_pred, model_name):
+        cm = confusion_matrix(y_true, y_pred)
+        plt.figure(figsize=(8, 6))
+        sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False)
+        plt.xlabel('Predicted')
+        plt.ylabel('Actual')
+        plt.title(f'Confusion Matrix for {model_name}')
+        plt.show()

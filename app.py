@@ -4,16 +4,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.metrics import log_loss, ConfusionMatrixDisplay, recall_score, precision_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, roc_auc_score, roc_curve, confusion_matrix
 from sklearn.preprocessing import StandardScaler
 from messages import msg
-from viz import visualize
 import dalex as dx
 import pickle
 from sklearn.metrics import classification_report
 import shap
 from explainerdashboard import ClassifierExplainer
+from viz import visualize
+
+viz = visualize()
 
 # Useful global stuff
 DATA_PATH = './data/heart_disease.csv'
@@ -187,19 +189,38 @@ with tab_data:
 # ==================
 with tab_model:
     st.header("Building And Explaining Models")
+    for line in msg.MODELS_DESCRIPTION:
+        st.write(line)
 
     # Model selection
     model_choice = st.selectbox("Select Model", ["Random Forest", "Logistic Regression"], key="model_choice")
 
     if model_choice == "Random Forest":
         st.subheader("Random Forest Model")
+        st.write(msg.MODEL_FOREST_DESCRIPTION)
         st.write("Results of the model training")
         st.write(rf_report_df)
+        # Plot AUROC
+        fig_auroc = viz.plot_auroc(rf_model, X_test_new, y_test_new, 'Random Forest')
+        st.pyplot(fig_auroc)
+    
+        # Plot Confusion Matrix
+        fig_cm = viz.plot_confusion_matrix(y_test_new, rf_model.predict(X_test_new), 'Random Forest')
+        st.pyplot(fig_cm)
 
     elif model_choice == "Logistic Regression":
         st.subheader("Logistic Regression Model")
+        st.write(msg.MODEL_LOGREG_DESCRIPTION)
         st.write("Results of the model training")
         st.write(lr_report_df)
+        
+        # Plot AUROC
+        fig_auroc = viz.plot_auroc(lr_model, X_test_new, y_test_new, 'Logistic Regression')
+        st.pyplot(fig_auroc)
+    
+        # Plot Confusion Matrix
+        fig_cm = viz.plot_confusion_matrix(y_test_new, lr_model.predict(X_test_new), 'Logistic Regression')
+        st.pyplot(fig_cm)
 
 
 # ===============
