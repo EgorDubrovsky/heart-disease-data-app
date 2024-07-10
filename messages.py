@@ -113,7 +113,9 @@ class msg():
                      'slope': 'The slope of the peak exercise ST segment. For more details see \
                                https://en.wikipedia.org/wiki/ST_segment',
                      'ca': 'Number of major vessels colored by flourosopy',
-                     'thal': 'No damn clue what this is bois',
+                     'thal': 'A "thallium defect" refers to an area of the heart muscle that shows reduced \
+                        uptake of thallium, indicating reduced blood flow to that region. There are different types of defects \
+                        that can be identified',
                      'num': 'Presence of heart disease'}
     FEATURES_VALS = {'age': 'Ordered integer value in range $[29, 77]$',
                      'sex': '0 = female, 1 = male',
