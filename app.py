@@ -11,6 +11,9 @@ from messages import msg
 from viz import visualize
 import dalex as dx
 import pickle
+from sklearn.metrics import classification_report
+import shap
+from explainerdashboard import ClassifierExplainer
 
 # Useful global stuff
 DATA_PATH = './data/heart_disease.csv'
@@ -26,15 +29,15 @@ st.set_option('deprecation.showPyplotGlobalUse', False)
 
 # Data load
 df_raw = pd.read_csv(DATA_PATH)  # This has all rows
-df = df_raw.dropna()             # This has no rows with missing values
+df = df_raw.dropna()  # This has no rows with missing values
 
 # Header
 st.title(msg.MAIN_TITLE)
 st.write(msg.APP_DESCRIPTION)
 
 # Tabs setup
-tab_data, tab_model, tab_xai, tab_fairness = st.tabs(['Exploring Data', 'Building Models', 'Explaining Algorithms', 'Evaluating Fairness'])
-
+tab_data, tab_model, tab_xai, tab_fairness = st.tabs(
+    ['Exploring Data', 'Building Models', 'Explaining Algorithms', 'Evaluating Fairness'])
 
 # ================
 # === SIDE BAR ===
@@ -44,15 +47,15 @@ sidebar = st.sidebar
 sidebar.header(msg.FILTER_TITLE)
 
 # Age slider
-age = sidebar.slider('Age', int(df['age'].min()), int(df['age'].max()), 
-                            (int(df['age'].min()), int(df['age'].max())))
+age = sidebar.slider('Age', int(df['age'].min()), int(df['age'].max()),
+                     (int(df['age'].min()), int(df['age'].max())))
 
 # Sex selectbox
 sex = sidebar.selectbox('Sex', ('Both', 'Male', 'Female'))
-    
+
 # Diagnosis multiselect
 diagnosis = sidebar.multiselect('Diagnosis', df['num'].unique(), df['num'].unique(),
-                                    format_func=lambda x: DIAGNOSIS_DICT[round(x)])
+                                format_func=lambda x: DIAGNOSIS_DICT[round(x)])
 
 # Filtering the dataframe
 sex_set = {0} if sex == 'Female' else {1} if sex == 'Male' else {0, 1}
@@ -87,15 +90,41 @@ sidebar.header(msg.DATA_DESCRIPTION_TITLE)
 for line in msg.DATASET_DESCRIPTION:
     sidebar.write(line)
 
+# Preprocess the new dataset
+X_new = df.drop("num", axis=1)  # Replace 'target_column' with the actual target column name
+y_new = df["num"]  # Replace 'target_column' with the actual target column name
+X_train_new, X_test_new, y_train_new, y_test_new = train_test_split(X_new, y_new, test_size=0.2, random_state=123,
+                                                                    stratify=y_new)
+
+
+@st.cache_resource
+def train_rf_model(X_train, y_train, X_test, y_test):
+    rf_model = RandomForestClassifier(n_estimators=100, max_depth=None, random_state=123)
+    rf_model.fit(X_train, y_train)
+    y_pred = rf_model.predict(X_test)
+    report = classification_report(y_test, y_pred, output_dict=True)
+    return rf_model, pd.DataFrame(report).transpose()
+
+
+@st.cache_resource
+def train_lr_model(X_train, y_train, X_test, y_test):
+    lr_model = LogisticRegression(max_iter=1000, random_state=123)
+    lr_model.fit(X_train, y_train)
+    y_pred = lr_model.predict(X_test)
+    report = classification_report(y_test, y_pred, output_dict=True)
+    return lr_model, pd.DataFrame(report).transpose()
+
+
+# Train the models on the new dataset
+rf_model, rf_report_df = train_rf_model(X_train_new, y_train_new, X_test_new, y_test_new)
+lr_model, lr_report_df = train_lr_model(X_train_new, y_train_new, X_test_new, y_test_new)
 
 # ================
 # === DATA TAB ===
 # ================
 
 
-
 with tab_data:
-
     # Full dataframe
     st.write(msg.FULL_DATASET_TITLE)
     st.write(msg.FULL_DATASET_MSG)
@@ -104,14 +133,14 @@ with tab_data:
     # Filtered dataframe
     st.write(msg.FILTERED_DATASET_TITLE)
     st.write(msg.FITERED_DATASET_MSG)
-    
+
     if filtered_df.shape[0]:
         st.dataframe(filtered_df)
     else:
         st.write(msg.EMPTY_FILTER_ERROR)
 
     # Individual distributions
-    CONTINUOUS = ('age', 'trestbps', 'chol', 'thalach', 'oldpeak') # These features will need a histogram
+    CONTINUOUS = ('age', 'trestbps', 'chol', 'thalach', 'oldpeak')  # These features will need a histogram
     st.write(msg.FEATURE_DISTRIBUTION_TITLE)
     st.write(msg.FEATURE_DISTRIBUTION_MSG)
 
@@ -132,7 +161,7 @@ with tab_data:
         feature2_name = st.selectbox("Select Feature 2", df.columns, index=1)
 
         # If names are equal - just put out the marginal distribution
-        if feature1_name == feature2_name: 
+        if feature1_name == feature2_name:
             if feature1_name in CONTINUOUS:
                 st.pyplot(visualize().continuous_distr(filtered_df, feature1_name))
             else:
@@ -156,14 +185,50 @@ with tab_data:
 # ==================
 # === MODELS TAB ===
 # ==================
+with tab_model:
+    st.header("Building And Explaining Models")
 
+    # Model selection
+    model_choice = st.selectbox("Select Model", ["Random Forest", "Logistic Regression"], key="model_choice")
+
+    if model_choice == "Random Forest":
+        st.subheader("Random Forest Model")
+        st.write("Results of the model training")
+        st.write(rf_report_df)
+
+    elif model_choice == "Logistic Regression":
+        st.subheader("Logistic Regression Model")
+        st.write("Results of the model training")
+        st.write(lr_report_df)
 
 
 # ===============
 # === XAI TAB ===
 # ===============
+with tab_xai:
+    model_choice = st.selectbox("Select Model", ["Random Forest", "Logistic Regression"], key="model_choice_xai")
+    if model_choice == "Random Forest":
+        model = rf_model
+    else:
+        model = lr_model
 
+    st.header("Model Explanations")
+    explainer = ClassifierExplainer(model, X_test_new, y_test_new, shap_kwargs=dict(approximate=True))
 
+    st.subheader("Feature Importance")
+    fi = explainer.get_importances_df()
+    st.bar_chart(fi.set_index('Feature')['MEAN_ABS_SHAP'])
+
+    st.subheader("SHAP Summary Plot")
+    shap_values = explainer.get_shap_values_df()
+    fig, ax = plt.subplots()
+    shap.summary_plot(shap_values.values, X_test_new, show=False)
+    st.pyplot(fig)
+
+    st.write("""
+    - **Feature Importance** helps identify which features are most influential overall.
+    - **SHAP Summary Plot** provides a global interpretation of feature impacts.
+    """)
 
 # ====================
 # === FAIRNESS TAB ===
