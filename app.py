@@ -227,29 +227,46 @@ with tab_model:
 # === XAI TAB ===
 # ===============
 with tab_xai:
-    model_choice = st.selectbox("Select Model", ["Random Forest", "Logistic Regression"], key="model_choice_xai")
+    st.header(msg.MODELS_TITLE)
+    st.write(msg.XAI_DESCRIPTION)
+    model_choice = st.selectbox("Select Model", ["Random Forest", "Logistic Regression"])
+
     if model_choice == "Random Forest":
-        model = rf_model
-    else:
-        model = lr_model
+        st.subheader(msg.MODEL_FOREST_TITLE)
+        st.write(msg.MODEL_FOREST_DESCRIPTION)
+        st.write(msg.XAI_RF_DESCRIPTION)
+        explainer = ClassifierExplainer(rf_model, X_test_new, y_test_new, shap_kwargs=dict(approximate=True))
+        fi = explainer.get_importances_df()
+        st.bar_chart(fi.set_index('Feature')['MEAN_ABS_SHAP'])
+        shap_values = explainer.get_shap_values_df()
+        fig, ax = plt.subplots()
+        shap.summary_plot(shap_values.values, X_test_new, show=False)
+        st.pyplot(fig)
 
-    st.header("Model Explanations")
-    explainer = ClassifierExplainer(model, X_test_new, y_test_new, shap_kwargs=dict(approximate=True))
+        st.write(msg.XAI_RF_GLOBAL_DISCUSSION)
+        st.write(msg.XAI_BOOST_CA_DISCUSSION)
+        st.write(msg.XAI_BOOST_FBS_DISCUSSION)
 
-    st.subheader("Feature Importance")
-    fi = explainer.get_importances_df()
-    st.bar_chart(fi.set_index('Feature')['MEAN_ABS_SHAP'])
+    elif model_choice == "Logistic Regression":
+        st.subheader(msg.MODEL_LOGREG_TITLE)
 
-    st.subheader("SHAP Summary Plot")
-    shap_values = explainer.get_shap_values_df()
-    fig, ax = plt.subplots()
-    shap.summary_plot(shap_values.values, X_test_new, show=False)
-    st.pyplot(fig)
+        st.write(msg.XAI_LOGREG_TITLE)
+        for line in msg.XAI_LOGREG_DESCRIPTION:
+            if line[:len(msg.FORMULA_TOKEN)] == msg.FORMULA_TOKEN:
+                st.latex(line[len(msg.FORMULA_TOKEN):])
+            else:
+                st.write(line)
+        coef_df = pd.DataFrame({
+            'Feature': X_new.columns,
+            'Coefficient': lr_model.coef_[0]
+        }).sort_values(by='Coefficient', key=abs, ascending=False)
 
-    st.write("""
-    - **Feature Importance** helps identify which features are most influential overall.
-    - **SHAP Summary Plot** provides a global interpretation of feature impacts.
-    """)
+        fig, ax = plt.subplots()
+        coef_df.plot(kind='barh', x='Feature', y='Coefficient', ax=ax)
+        ax.set_title(msg.FEATURE_COEFFICIENTS)
+        st.pyplot(fig)
+
+        st.write(msg.XAI_LOGREG_DISCUSSION)
 
 # ====================
 # === FAIRNESS TAB ===

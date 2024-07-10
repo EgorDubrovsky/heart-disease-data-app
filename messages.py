@@ -11,8 +11,8 @@ class msg():
     FEATURE_CORRELATION_TITLE = '### Pairwise Feature Distributions (filtered)'
     MODEL_DUMMY_TITLE = '### Dummy Model'
     PERFOMANCE_DUMMY_TITLE = '#### 🐌 Dummy Model Perfomance'
-    MODEL_LOGREG_TITLE = '### Simple Logistic Regression'
-    MODEL_FOREST_TITLE = '### Random Forest'
+    MODEL_LOGREG_TITLE = 'Simple Logistic Regression'
+    MODEL_FOREST_TITLE = 'Random Forest'
     MODEL_BOOST_TITLE = '### Gradient Boosting'
     FAIRNESS_LOGREG_TITLE = '### Fairness Metrics for Logistic Regression'
     FAIRNESS_MOD_TITLE = '###  Modified Fairness Metrics for Logistic Regression'
@@ -21,6 +21,9 @@ class msg():
     XAI_BOOST_TITLE = '### Explaining Gradient Boosting'
     XAI_BOOST_INDIVIDUAL_TITLE = '#### 🤒❓ Explaining Individual Samples'
     XAI_BOOST_GLOBAL_TITLE = '#### 👨‍👩‍👧‍👦❓ Global Explanations'
+    MODELS_TITLE = "Model Explanation"
+    FEATURE_IMPORTANCE = "Feature Importance (Coefficients)"
+    FEATURE_COEFFICIENTS = "Feature Coefficients"
 
     # Text snippets
     SELECT_FEATURE_MSG = 'Select the feature you would like to know more about!'
@@ -74,9 +77,9 @@ class msg():
                                weights can tell us about the relevance of all features for model\'s decision-making. Here is the plot:'
                              ]
     XAI_LOGREG_DISCUSSION = 'Weights with higher absolute value correspond to more relevant features; features with positive weights \
-                             (blue) shift the model\'s decision towards the "ill" label, features with negative weights (red) \
+                             shift the model\'s decision towards the "ill" label, features with negative weights \
                              shift the model\'s decision towards the "healthy" label.'
-    XAI_BOOST_DESCRIPTION = 'Gradient Boosting is a black-box model, meaning that it doesn\'t have a weight vector or some other way \
+    XAI_RF_DESCRIPTION = 'Random Forest is a black-box model, meaning that it doesn\'t have a weight vector or some other way \
                              of being interpretable by default. We will use the SHAP values to gain some insight. SHAP values, in essence, \
                              tell us how a prediction would change if we were to "hide" the value of a certain feature from the model. \
                              Let\'s see them in action now!'
@@ -85,14 +88,14 @@ class msg():
                                        healthy. Among red features you can often see things like high BMI, low health self-assessment or \
                                        high blood pressure. Among blue features you can often see things like normal cholesterol levels, \
                                        healthy BMI or high health self-assessment.'
-    XAI_BOOST_GLOBAL_DISCUSSION = 'Here we can see the average relevance for different values of different features. If the feature is located low, \
+    XAI_RF_GLOBAL_DISCUSSION = 'Here we can see the average relevance for different values of different features. If the feature is located low, \
                                    all its values are located near the 0.0 line, which means that these features are almost irrelevant. Higher features \
                                    have higher importance. Let\'s look at a few examples.'
-    XAI_BOOST_BMI_DISCUSSION = '**BMI**: We can see that the highest BMI values often have maximal relevance and shift the model to label the person \
-                                as ill. At the same time, the lowest BMI values are slightly less relevant and encourage the model to label \
-                                the person as healthy. Average values of BMI tend to have low relevance.'
-    XAI_BOOST_STROKE_DISCUSSION = '**Stroke**: *Stroke* is a binary variable. We can see that if a person didn\'t suffer a stroke (*Stroke* = 0), \
-                                   the feature is not at all relevant for the model. If the person did suffer a stroke (*Stroke* = 1), \
+    XAI_BOOST_CA_DISCUSSION = '**ca**: We can see that the highest ca (Number of major vessels colored by flourosopy) values often have maximal relevance and shift the model to label the person \
+                                as ill. At the same time, the lowest values encourage the model to label \
+                                the person as healthy.'
+    XAI_BOOST_FBS_DISCUSSION = '**fbs**: *fbs* is a binary variable. We can see that if a person doesn\'t have high blood sugar, \
+                                   the feature is not at all relevant for the model. If the person does have a high blood sugar, \
                                    the feature may be somewhat relevant for the prediction, and shifts the decision towards an \'ill\' label.'
     
     # Feature exploration dictionaries
