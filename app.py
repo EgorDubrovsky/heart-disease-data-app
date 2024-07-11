@@ -18,11 +18,8 @@ viz = visualize()
 
 # Useful global stuff
 DATA_PATH = './data/heart_disease.csv'
-DIAGNOSIS_DICT = {0: 'hd0',
-                  1: 'hd1',
-                  2: 'hd2',
-                  3: 'hd3',
-                  4: 'hd4'}
+DIAGNOSIS_DICT = {0: 'healthy',
+                  1: 'ill'}
 MODELS_SEED = 123
 
 assert msg.FEATURES_DESC.keys() == msg.FEATURES_VALS.keys()
