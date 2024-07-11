@@ -75,7 +75,6 @@ sidebar.write(msg.SEPARATOR)
 sidebar.header(msg.FEATURE_TITLE)
 sidebar.write(msg.SELECT_FEATURE_MSG)
 selectbox_choices = list(df.columns)
-selectbox_choices.append('this_is_a_missing_feature')
 trivia_target = sidebar.selectbox("Select Feature", selectbox_choices)
 if trivia_target in msg.FEATURES_DESC.keys() and trivia_target in msg.FEATURES_VALS.keys():
     sidebar.write('🤓 Info on *' + trivia_target + '* 🤓')
@@ -146,7 +145,7 @@ with tab_data:
     st.write(msg.FEATURE_DISTRIBUTION_MSG)
 
     if filtered_df.shape[0]:
-        feature_name = st.selectbox("Select Feature", df.columns)
+        feature_name = st.selectbox("Select Feature", df.columns, key='individual_distr')
         if feature_name in CONTINUOUS:
             st.pyplot(visualize().continuous_distr(filtered_df, feature_name))
         else:

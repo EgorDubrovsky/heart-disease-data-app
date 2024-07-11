@@ -48,10 +48,11 @@ class msg():
                        You can examine surface-level data analysis, as well as predicitons of \
                        simple machine learning models and their fairness.\n \n For more information:\n \
                        https://archive.ics.uci.edu/dataset/45/heart+disease'
-    DATASET_DESCRIPTION = ['*Created by*:',
-                           '*Created in*:',
-                           '*Purpose of creation*:',
-                           '*Data collection method*:']
+    DATASET_DESCRIPTION = ['*Introductory paper*: https://www.semanticscholar.org/paper/International-application-of-a-new-probability-for-Detrano-Jánosi/a7d714f8f87bfc41351eb5ae1e5472f0ebbe0574',
+                           '*Created by*: Andras Janosi, William Steinbrunn, Matthias Pfisterer, Robert Detrano',
+                           '*Created in*: 1989',
+                           '*Purpose of creation*: validation of a newly proposed probbility model',
+                           '*Data collection method*: medical examination']
     MODELS_DESCRIPTION = ['On this tab you can explore the work of diffrent classification models which predict \
                           whether a patient is likely to have a heart disease', '❗**IMPORTANT**❗: for simplicity, we combine labels 1 to 4 \
                           together. This allows for the simpler binary \
