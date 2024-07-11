@@ -56,8 +56,8 @@ class visualize():
         to_plot = [[df[df[feature1] == val1][df[feature2] == val2].shape[0] for 
                     val2 in sorted(df[feature2].unique())] for val1 in sorted(df[feature1].unique())]
         sns.heatmap(to_plot, annot=True, cmap=cm.YlOrBr, fmt='d')
-        ax.set_xlabel(feature1)
-        ax.set_ylabel(feature2)
+        ax.set_xlabel(feature2)
+        ax.set_ylabel(feature1)
         #ax.imshow(to_plot)
         #ax.scatter(df[feature1], df[feature2], color='skyblue', edgecolor='black')
         return fig
