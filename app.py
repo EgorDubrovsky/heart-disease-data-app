@@ -233,7 +233,6 @@ with tab_xai:
 
     if model_choice == "Random Forest":
         st.subheader(msg.MODEL_FOREST_TITLE)
-        st.write(msg.MODEL_FOREST_DESCRIPTION)
         st.write(msg.XAI_RF_DESCRIPTION)
         explainer = ClassifierExplainer(rf_model, X_test_new, y_test_new, shap_kwargs=dict(approximate=True))
         fi = explainer.get_importances_df()
@@ -263,7 +262,6 @@ with tab_xai:
         st.write(msg.XAI_BOOST_FBS_DISCUSSION)
 
     elif model_choice == "Logistic Regression":
-        st.subheader(msg.MODEL_LOGREG_TITLE)
 
         for line in msg.XAI_LOGREG_DESCRIPTION:
             if line[:len(msg.FORMULA_TOKEN)] == msg.FORMULA_TOKEN:
