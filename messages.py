@@ -197,10 +197,10 @@ class msg():
     SEPARATOR = '_' * 15
 
     # Fairnes metrics
-    FF_METRIC_1 = "Probability of Positively Predicted group with Heart Disease"
-    FF_METRIC_2 = "Probability of Positively Predicted Diabetic group with Heart Disease"
-    FF_METRIC_3 = "Positive Predictive Value(PPV) of group with Heart Disease"
-    FF_METRIC_4 = "False Positive Rate(FPR) of group with Heart Disease"
+    FF_METRIC_1 = "Group Fairness"
+    FF_METRIC_2 = "Conditional Statistical Fairness (conditional on diabetes feature)"
+    FF_METRIC_3 = "Predictive Parity"
+    FF_METRIC_4 = "False Positive Error Rate Balance"
 
     # Fairness Tab Introduction
     FF_METRICS_INTRODUCTION="""
