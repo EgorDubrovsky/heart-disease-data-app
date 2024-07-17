@@ -2,6 +2,7 @@ import numpy as np
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -184,8 +185,11 @@ with tab_data:
 # ==================
 with tab_model:
     st.header("Building And Explaining Models")
-    for line in msg.MODELS_DESCRIPTION:
-        st.write(line)
+    st.write(msg.MODELS_DESCRIPTION[0])
+    st.markdown(
+        msg.MODELS_WARNING,
+        unsafe_allow_html=True
+    )
 
     # Model selection
     model_choice = st.selectbox("Select Model", ["Random Forest", "Logistic Regression"], key="model_choice")
@@ -232,7 +236,22 @@ with tab_xai:
         st.write(msg.XAI_RF_DESCRIPTION)
         explainer = ClassifierExplainer(rf_model, X_test_new, y_test_new, shap_kwargs=dict(approximate=True))
         fi = explainer.get_importances_df()
-        st.bar_chart(fi.set_index('Feature')['MEAN_ABS_SHAP'])
+        fi_sorted = fi.sort_values(by='MEAN_ABS_SHAP', ascending=False)
+        fi_sorted['Feature'] = pd.Categorical(fi_sorted['Feature'], categories=fi_sorted['Feature'], ordered=True)
+        plt.figure(figsize=(10, 8))
+        sns.barplot(x='MEAN_ABS_SHAP', y='Feature', data=fi_sorted, orient='h')
+        plt.xlabel('Mean Absolute SHAP Value')
+        plt.ylabel('Feature')
+        plt.title('Feature Importances')
+
+        st.pyplot(plt)
+
+        st.markdown(
+            msg.SHAP_VALUES_DISCUSSION,
+            unsafe_allow_html=True
+        )
+
+        st.write(msg.SHAP_VALUES_INDIVIDUAL_DISCUSSION)
         shap_values = explainer.get_shap_values_df()
         fig, ax = plt.subplots()
         shap.summary_plot(shap_values.values, X_test_new, show=False)

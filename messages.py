@@ -54,11 +54,17 @@ class msg():
                            '*Purpose of creation*: validation of a newly proposed probbility model',
                            '*Data collection method*: medical examination']
     MODELS_DESCRIPTION = ['On this tab you can explore the work of diffrent classification models which predict \
-                          whether a patient is likely to have a heart disease', '❗**IMPORTANT**❗: for simplicity, we combine labels 1 to 4 \
+                          whether a patient is likely to have a heart disease', '❗<b>IMPORTANT</b>❗: for simplicity, we combine labels 1 to 4 \
                           together. This allows for the simpler binary \
-                          classification and more interpretable metrics.', '❗**IMPORTANT**❗: data will **not** \
+                          classification and more interpretable metrics.', '❗<b>IMPORTANT</b>❗: data will <b>not</b> \
                           be filtered for training the models.'
                           ]
+    MODELS_WARNING = f"""
+        <div style="border: 2px solid #FF0000; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            <p>{MODELS_DESCRIPTION[1]}</p>
+            <p>{MODELS_DESCRIPTION[2]}</p>
+        </div>
+        """
     MODEL_LOGREG_DESCRIPTION = 'Logistic regression is a simple classifier and one of the most iconic and used machine learning algorithms. \
                                 Let\'s see how it tries to build predictions for our dataset.'
     MODEL_FOREST_DESCRIPTION = 'Random forest is a more advanced classification model which consists of many smaller models called decision trees. \
@@ -92,6 +98,22 @@ class msg():
                                        healthy. Among red features you can often see things like high BMI, low health self-assessment or \
                                        high blood pressure. Among blue features you can often see things like normal cholesterol levels, \
                                        healthy BMI or high health self-assessment.'
+    SHAP_VALUES_DISCUSSION = """
+            <div style="border: 2px solid #4CAF50; padding: 10px; border-radius: 5px;margin-bottom: 20px">
+                <h3>Shap Values</h3>
+                <p>SHAP (SHapley Additive exPlanations) values provide a unified measure of feature importance. 
+                They represent the impact each feature has on the model's output, averaged across all predictions. 
+                The Mean Absolute SHAP Value (MEAN_ABS_SHAP) indicates the average magnitude of a feature's effect on the predictions, 
+                regardless of the direction (positive or negative).</p>
+                <p>The chart above displays the feature importances as determined by the Random Forest model. 
+                Higher SHAP values signify features that have a more significant impact on the model's output.</p>
+                <ul>
+                    <li><strong>Feature:</strong> The name of the feature from the dataset.</li>
+                    <li><strong>Mean Absolute SHAP Value:</strong> The average magnitude of the SHAP values for the feature, indicating its overall importance.</li>
+                </ul>
+            </div>
+            """
+    SHAP_VALUES_INDIVIDUAL_DISCUSSION = "Now let's look at individual SHAP values"
     XAI_RF_GLOBAL_DISCUSSION = 'Here we can see the average relevance for different values of different features. If the feature is located low, \
                                    all its values are located near the 0.0 line, which means that these features are almost irrelevant. Higher features \
                                    have higher importance. Let\'s look at a few examples.'
