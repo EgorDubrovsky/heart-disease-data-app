@@ -424,14 +424,14 @@ with tab_fairness:
     st.dataframe(fairness_df_lr_balanced)
 
     st.write(msg.FAIRNESS_RF_BALANCED_TITLE)
-    pf = ff.group_fairness(pred_df, 'sex', 0, 'prediction_rf', 1)
-    pm = ff.group_fairness(pred_df, 'sex', 1, 'prediction_rf', 1)
-    pfs = ff.conditional_statistical_parity(pred_df, "sex", 0, "prediction_rf", 1, "fbs", 1)
-    pms = ff.conditional_statistical_parity(pred_df, "sex", 1, "prediction_rf", 1, "fbs", 1)
-    ppvf = ff.predictive_parity(pred_df, "sex", 0, "prediction_rf", "num")
-    ppvm = ff.predictive_parity(pred_df, "sex", 1, "prediction_rf", "num")
-    fprf = ff.fp_error_rate_balance(pred_df, "sex", 0, "prediction_rf", "num")
-    fprm = ff.fp_error_rate_balance(pred_df, "sex", 1, "prediction_rf", "num")
+    pf = ff.group_fairness(pred_df_balanced, 'sex', 0, 'prediction_rf', 1)
+    pm = ff.group_fairness(pred_df_balanced, 'sex', 1, 'prediction_rf', 1)
+    pfs = ff.conditional_statistical_parity(pred_df_balanced, "sex", 0, "prediction_rf", 1, "fbs", 1)
+    pms = ff.conditional_statistical_parity(pred_df_balanced, "sex", 1, "prediction_rf", 1, "fbs", 1)
+    ppvf = ff.predictive_parity(pred_df_balanced, "sex", 0, "prediction_rf", "num")
+    ppvm = ff.predictive_parity(pred_df_balanced, "sex", 1, "prediction_rf", "num")
+    fprf = ff.fp_error_rate_balance(pred_df_balanced, "sex", 0, "prediction_rf", "num")
+    fprm = ff.fp_error_rate_balance(pred_df_balanced, "sex", 1, "prediction_rf", "num")
 
     fairness_metrics_rf_balanced = {
         "No.": [1,2,3, 4],
