@@ -264,7 +264,6 @@ with tab_xai:
     elif model_choice == "Logistic Regression":
         st.subheader(msg.MODEL_LOGREG_TITLE)
 
-        st.write(msg.XAI_LOGREG_TITLE)
         for line in msg.XAI_LOGREG_DESCRIPTION:
             if line[:len(msg.FORMULA_TOKEN)] == msg.FORMULA_TOKEN:
                 st.latex(line[len(msg.FORMULA_TOKEN):])
