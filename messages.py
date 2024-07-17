@@ -66,9 +66,18 @@ class msg():
         </div>
         """
     MODEL_LOGREG_DESCRIPTION = 'Logistic regression is a simple classifier and one of the most iconic and used machine learning algorithms. \
-                                Let\'s see how it tries to build predictions for our dataset.'
-    MODEL_FOREST_DESCRIPTION = 'Random forest is a more advanced classification model which consists of many smaller models called decision trees. \
-                                Will it be any better than the more shallow models?'
+                               It is a statistical model used for binary classification problems, where the goal is to predict the probability \
+                               of one of two possible outcomes. It models the relationship between a dependent binary variable and one or more \
+                              independent variables using the logistic function. The logistic function maps any real-valued number into a value \
+                              between 0 and 1, which can be interpreted as a probability. Logistic Regression estimates the coefficients of the model \
+                              using maximum likelihood estimation, providing a straightforward and interpretable way to understand the influence of each predictor on the outcome.\
+                              Let\'s see how it tries to build predictions for our dataset.\
+                              **Click here for more information about Logistic Regression:** https://www.ibm.com/topics/logistic-regression'
+    MODEL_FOREST_DESCRIPTION = 'Random Forest is an ensemble learning method primarily used for classification and regression tasks. It constructs multiple \
+                      decision trees during training and merges them to improve the predictive accuracy and control overfitting. Each tree is built from a random subset \
+                      of the training data and a random subset of features, which introduces variability and robustness. The final prediction is made by \
+                      aggregating the predictions of all individual trees, typically using majority voting for classification or averaging for regression.\
+                      **Click the link for more information about Random Forest:** https://www.ibm.com/topics/random-forest'
     FAIRNESS_DESCRIPTION = ['On this tab you can explore different metrics associated with gender fairness, \
                             and see how fairly our models fare.']
     FAIRNESS_DISCUSSION = 'In reality, it makes little to no sense to assess the Group Fairness metric, since the frequency of heart disease \
