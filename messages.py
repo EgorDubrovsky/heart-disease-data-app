@@ -82,7 +82,7 @@ class msg():
     FAIRNESS_DESCRIPTION = ['On this tab you can explore different metrics associated with gender fairness, \
                             and see how fairly our models fare.']
     FAIRNESS_DISCUSSION = 'In reality, it makes little to no sense to assess the Group Fairness and Conditional Statistical Fairness metrics, since the frequency of heart disease \
-                           is inherently different in men and women. \n On the other hand, metrics such as Positively Predicted Value or False Positive Rate \
+                           is inherently different in men and women. \n On the other hand, metrics such as Predictive Parity or False Positive Error Rate Balance \
                            are useful, since they show us if the model makes the same amount of mistakes on men and women.'
     FAIRNESS_DISCUSSION_BALANCED= """
       After balancing the dataset based on the 'sex' feature, we can observe the following changes in fairness metrics:
@@ -205,60 +205,45 @@ class msg():
     # Fairness Tab Introduction
     FF_METRICS_INTRODUCTION="""
     #### Group Fairness
-    Members of each group need to have the same probability of being assigned to the positively predicted class.
 
-    In our case we will define the positive class as being predicted with heart disease. 
+    This metric checks if members of each group have the same probability of being assigned to the positive class.
+    In our case we will define the positive class as being predicted having heart disease. 
 
-    For example, if we investigate the group 'Sex' then :blue-background[both groups should ideally have the same probability to receive a heart disease prediction.] 
-    \n Mathematically this is stated as followed:
+    For example, if we investigate the group 'Sex' then coinciding Group Fairness metrics would imply that
+    :blue-background[both groups have the same probability to receive an 'ill' prediction.] Mathematically this is stated as follows:
     
-    P(HeartDiseasePrediction = 1 | Sex = female) == P(HeartDiseasePrediction = 1 | Sex = male)  
-
-    Here is how we can calculate this dependent probability for one group:
-    
-    P(HeartDiseasePrediction = 1 | Sex = female) = P(HeartDiseasePrediction = 1 and Sex = female) / P(Sex = female)
-    
-    The 'and' in the formula represents the intersection of HeartDisease = 1 and Sex = female, containing all entries where individuals of female sex are predicted to have heart disease.
+    P(Prediction = 1 | Sex = female) == P(Prediction = 1 | Sex = male)  
 
     If we calculate this probability for both groups we can then compare them and check if Group Fairness is present or not.
 
     #### Conditional Statistical Fairness
 
-    Members of each group need to have the same probability of being assigned to the positive class under the same set of conditions. 
+    This metric checks if members of each group have the same probability of being assigned to the positive class *under the same set of conditions*.
 
-    Conditional Statistical Fairness can be understood as an extension of the Group Fairness metric. While the latter only takes the group and target variable into account, Conditional Statistical Fairness considers an additional third variable from the dataset in the calculation. This allows for a much clearer but potentially more complex answer to why groups may or may not be treated unevenly. 
-
-    For example, we could include the 'fbs' attribute (which represents fasting blood sugar more than 120ng/ml which indicates presence of diabetes) if we want to know whether women and men have a (ideally) similar probability of being predicted to have heart disease under the condition that both groups consist only people who have diabetes. Our formula would then look like this:
+    For example, equal Conditional Statistical Fairness with respect to the 'fbs' feature would imply
     
     P(HeartDiseasePrediction = 1 | Sex = female, fbs = 1) == P(HeartDiseasePrediction = 1 | Sex = male, fbs = 1)
 
-    In practice, our dataset will often contain multiple attributes, which all can have the potential to influence our prediction. 
-    We can even include more than one variable at once in the calculation of Conditional Statistical Fairness, however, adding more attributes at once will increase the complexity exponentially. 
-    
-
-    The calculation of the Conditional Statistical Fairness is very similar to that of the Group Fairness:
-    
-    P(HeartDiseasePrediction = 1 | Sex = female, fbs = 1) = P(HeartDiseasePrediction = 1 and Sex = female and fbs = 1) / P(Sex = female and fbs = 1)
-
-    :blue-background[This formula gives us the likelihood of women who have diabetes to have heart disease.]
+    This formula implies that :blue-background[both diabetic men and women have the same probability to receive an 'ill' prediction.]
 
     Group Fairness as well as the Conditional Statistical Fairness both only consider the predictions of the machine learning model. 
     The two upcoming metrics do additionally include the ground truth of each prediction.
 
     #### Predictive Parity
 
-    Members of each group have the same Positive Predictive Value (PPV) — the probability of a subject with Positive Predicted Value to truly belong to the positive class. \n
+    Positive Predictive Value (PPV) is the probability of a subject who is predicted as 'ill' to truly have heart disease.
+
     :blue-background[The PPV is calculated as:  True Positives / (True Positives + False Positives)]
 
-    :blue-background[A high PPV indicates that we can be sure that a positive prediction is true.] Ideally this value is 1, then we can be certain that the (positive) prediction is true.
-    In our example, we would want to analyze whether women or men are less likely to truly belong to the positive class and whether there is a significant difference between these two groups.
+    A high PPV indicates that we can be sure that a positive prediction is true. Ideally this value is 1, then we can be certain that any positive prediction is true.
+    
+    :blue-background[Predcitive Parity checks whether men and women get the same values of PPV from model's predictions.]
 
     #### False Positive Error Rate Balance
 
-    Members of each group have the same False Positive Rate (FPR) — the probability of a subject in the negative class to have a positive predicted value. 
-    \n :blue-background[The FPR is calculated as:  False Positives / (False Positives + True Negatives)]
+    False Positive Rate (FPR) is the probability of a subject who is predicted as 'ill' to actually be healthy.
 
-    :blue-background[The FPR gives insight into the balance between True Negatives and False Positives, If the value is high most of the true negatives are predicted as true, if it is low the algorithm detects most of the true negatives as actually negative.]
+    :blue-background[The FPR is calculated as:  False Positives / (False Positives + True Negatives)]
 
-    In our example, we would want to analyze if any group is favored by having a higher FPR than the other, thus predicting it more often to be prone to heart disease even though they are not prone.
+    :blue-background[False Positive Error Rate Balance checks whether men and women get the same values of FPR from model's predictions.]
     """
