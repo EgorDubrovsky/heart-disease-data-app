@@ -87,15 +87,15 @@ class msg():
     FAIRNESS_DISCUSSION_BALANCED= """
       After balancing the dataset based on the 'sex' feature, we can observe the following changes in fairness metrics:
 
-    1. Group Fairness: The probabilities of being assigned to the positive class (heart disease prediction) for males did not change much for both male and female groups for both the models. :blue-background[No improvement in group fairness.]
+    1. Group Fairness: The probabilities of being assigned to the positive class (heart disease prediction) for males did not change much for both male and female groups for both the models. :blue-background[No significant improvement in group fairness.]
 
-    2. Conditional Statistical Fairness: The probabilities for both sexes to get heart disease, given the condition of having diabetes (fbs = 1), are more unbalanced now for Logistic regression and unchanged for Random forest model. :blue-background[No improvement in conditional statistical fairness.]
+    2. Conditional Statistical Fairness: The probabilities for both sexes to get heart disease, given the condition of having diabetes (fbs = 1), are more unbalanced now for Logistic regression and Random forest model. :blue-background[Slight decline in conditional statistical fairness.]
 
-    3. Predictive Parity: The Positive Predictive Values (PPV) reduced slightly for both females and males for Logistic Regression and remained unchanged for Random forest models for both sex. :blue-background[No improvement in predictive parity.]
+    3. Predictive Parity: The Positive Predictive Values (PPV) reduced slightly for both females and males for Logistic Regression and improved for Random forest models for males. :blue-background[Improved for Random Forest but worsened for Logistic Regression.]
 
-    4. False Positive Error Rate Balance: The False Positive Rates (FPR) increased for both the sexes for Logistic Regression and remained unchanged for Random forest model for both the sexes. :blue-background[No improvement in false positive error rate balance.]
+    4. False Positive Error Rate Balance: The False Positive Rates (FPR) increased for both the sexes for Logistic Regression and remained unchanged for Random forest model for both the sexes. :blue-background[Improved for Random Forest but worsened for Logistic Regression.]
 
-    :blue-background[This concludes that oversampling for balancing the two groups males and females in the input dataset did not lead to any improved group fairness, conditional statistical fairness, positive predictive values or false positive error rate balance.]
+    :blue-background[This concludes that oversampling for balancing the two groups males and females in the input dataset did not lead to much improvement in group fairness and conditional statistical fairness for both the models but positive predictive values and false positive error rate balance improved for Random Forest model and worsened for Logistic Regression model]
     """
     
     XAI_DESCRIPTION = 'Perhaps you are wondering "How do the models make decisions?" There are a lot of ways of gaining deeper \
