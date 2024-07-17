@@ -14,6 +14,7 @@ import shap
 from explainerdashboard import ClassifierExplainer
 from viz import visualize
 import fairness_functions as ff
+from sklearn.utils import resample
 
 viz = visualize()
 
@@ -293,6 +294,8 @@ with tab_fairness:
     for line in msg.FAIRNESS_DESCRIPTION:
         st.write(line)
 
+    st.markdown(msg.FF_METRICS_INTRODUCTION)
+
     st.write(msg.FAIRNESS_LOGREG_TITLE)
     st.write(msg.FAIRNESS_LOGREG_MSG)
     pf = ff.group_fairness(pred_df, 'sex', 0, 'prediction_lr', 1)
@@ -305,18 +308,15 @@ with tab_fairness:
     fprm = ff.fp_error_rate_balance(pred_df, "sex", 1, "prediction_lr", "num")
 
     fairness_metrics_lr = {
-    "No.": range(1, 9),
-    "Metric": [
-        msg.FF_METRIC_1,
-        msg.FF_METRIC_2,
-        msg.FF_METRIC_3,
-        msg.FF_METRIC_4,
-        msg.FF_METRIC_5,
-        msg.FF_METRIC_6,
-        msg.FF_METRIC_7,
-        msg.FF_METRIC_8
-    ],
-    "Value": [pf, pm, pfs, pms, ppvf, ppvm, fprf, fprm]
+        "No.": [1,2,3, 4],
+        "Metric": [
+            msg.FF_METRIC_1,
+            msg.FF_METRIC_2,
+            msg.FF_METRIC_3, 
+            msg.FF_METRIC_4,
+        ],
+        "Female": [pf, pfs, ppvf, fprf],
+        "Male": [pm, pms, ppvm, fprm]
     }
 
     fairness_df_lr = pd.DataFrame(fairness_metrics_lr)
@@ -335,18 +335,15 @@ with tab_fairness:
     fprm = ff.fp_error_rate_balance(pred_df, "sex", 1, "prediction_rf", "num")
 
     fairness_metrics_rf = {
-    "No.": range(1, 9),
-    "Metric": [
-        msg.FF_METRIC_1,
-        msg.FF_METRIC_2,
-        msg.FF_METRIC_3,
-        msg.FF_METRIC_4,
-        msg.FF_METRIC_5,
-        msg.FF_METRIC_6,
-        msg.FF_METRIC_7,
-        msg.FF_METRIC_8
-    ],
-    "Value": [pf, pm, pfs, pms, ppvf, ppvm, fprf, fprm]
+        "No.": [1,2,3, 4],
+        "Metric": [
+            msg.FF_METRIC_1,
+            msg.FF_METRIC_2,
+            msg.FF_METRIC_3, 
+            msg.FF_METRIC_4,
+        ],
+        "Female": [pf, pfs, ppvf, fprf],
+        "Male": [pm, pms, ppvm, fprm]
     }
 
     fairness_df_rf = pd.DataFrame(fairness_metrics_rf)
@@ -355,3 +352,105 @@ with tab_fairness:
 
     st.write(msg.FAIRNESS_DISCUSS_TITLE)
     st.write(msg.FAIRNESS_DISCUSSION)
+
+    # Balancingg using over sampling starts here
+    df_raw = pd.read_csv(DATA_PATH)
+    df_raw['num'] = df_raw['num'].apply(lambda x: 1 if x > 0 else x)
+    df = df_raw.dropna()
+
+    # Balance the dataset based on 'sex'
+    df_male = df[df['sex'] == 1]
+    df_female = df[df['sex'] == 0]
+
+    # Determine which class to oversample
+    if len(df_male) < len(df_female):
+        df_minority = df_male
+        df_majority = df_female
+    else:
+        df_minority = df_female
+        df_majority = df_male
+
+    # Oversample minority class
+    df_minority_upsampled = resample(df_minority, 
+                                 replace=True,
+                                 n_samples=len(df_majority),
+                                 random_state=MODELS_SEED)
+
+    # Combine majority class with upsampled minority class
+    df_balanced = pd.concat([df_majority, df_minority_upsampled])
+
+    # Prepare the balanced dataset for modeling
+    X_balanced = df_balanced.drop("num", axis=1)
+    y_balanced = df_balanced["num"]
+
+    # Split the balanced dataset
+    X_train_balanced, X_test_balanced, y_train_balanced, y_test_balanced = train_test_split(
+        X_balanced, y_balanced, test_size=0.2, random_state=MODELS_SEED, stratify=y_balanced
+    )
+
+    # Train the models on the balanced dataset
+    rf_model_balanced, rf_report_df_balanced = train_rf_model(X_train_balanced, y_train_balanced, X_test_balanced, y_test_balanced)
+    lr_model_balanced, lr_report_df_balanced = train_lr_model(X_train_balanced, y_train_balanced, X_test_balanced, y_test_balanced)
+
+    # Update the predictions for the entire balanced dataset
+    pred_df_balanced = df_balanced.copy()
+    X = df_balanced.drop("num", axis=1)
+    pred_df_balanced["prediction_lr"] = lr_model_balanced.predict(X)
+    pred_df_balanced["prediction_rf"] = rf_model_balanced.predict(X)
+
+    st.write("We have balanced the dataset based on the 'sex' feature using random oversampling and re-trained the models and evaluated the fairness metrics again. Let's review the fairness metrics for our balanced models.")
+    st.write(msg.FAIRNESS_LOGREG_BALANCED_TITLE)
+    pf = ff.group_fairness(pred_df_balanced, 'sex', 0, 'prediction_lr', 1)
+    pm = ff.group_fairness(pred_df_balanced, 'sex', 1, 'prediction_lr', 1)
+    pfs = ff.conditional_statistical_parity(pred_df_balanced, "sex", 0, "prediction_lr", 1, "fbs", 1)
+    pms = ff.conditional_statistical_parity(pred_df_balanced, "sex", 1, "prediction_lr", 1, "fbs", 1)
+    ppvf = ff.predictive_parity(pred_df_balanced, "sex", 0, "prediction_lr", "num")
+    ppvm = ff.predictive_parity(pred_df_balanced, "sex", 1, "prediction_lr", "num")
+    fprf = ff.fp_error_rate_balance(pred_df_balanced, "sex", 0, "prediction_lr", "num")
+    fprm = ff.fp_error_rate_balance(pred_df_balanced, "sex", 1, "prediction_lr", "num")
+
+    fairness_metrics_lr_balanced = {
+        "No.": [1,2,3, 4],
+        "Metric": [
+            msg.FF_METRIC_1,
+            msg.FF_METRIC_2,
+            msg.FF_METRIC_3, 
+            msg.FF_METRIC_4,
+        ],
+        "Female": [pf, pfs, ppvf, fprf],
+        "Male": [pm, pms, ppvm, fprm]
+    }
+
+    fairness_df_lr_balanced = pd.DataFrame(fairness_metrics_lr_balanced)
+    fairness_df_lr_balanced = fairness_df_lr_balanced.set_index('No.')
+    st.dataframe(fairness_df_lr_balanced)
+
+    st.write(msg.FAIRNESS_RF_BALANCED_TITLE)
+    pf = ff.group_fairness(pred_df, 'sex', 0, 'prediction_rf', 1)
+    pm = ff.group_fairness(pred_df, 'sex', 1, 'prediction_rf', 1)
+    pfs = ff.conditional_statistical_parity(pred_df, "sex", 0, "prediction_rf", 1, "fbs", 1)
+    pms = ff.conditional_statistical_parity(pred_df, "sex", 1, "prediction_rf", 1, "fbs", 1)
+    ppvf = ff.predictive_parity(pred_df, "sex", 0, "prediction_rf", "num")
+    ppvm = ff.predictive_parity(pred_df, "sex", 1, "prediction_rf", "num")
+    fprf = ff.fp_error_rate_balance(pred_df, "sex", 0, "prediction_rf", "num")
+    fprm = ff.fp_error_rate_balance(pred_df, "sex", 1, "prediction_rf", "num")
+
+    fairness_metrics_rf_balanced = {
+        "No.": [1,2,3, 4],
+        "Metric": [
+            msg.FF_METRIC_1,
+            msg.FF_METRIC_2,
+            msg.FF_METRIC_3, 
+            msg.FF_METRIC_4,
+        ],
+        "Female": [pf, pfs, ppvf, fprf],
+        "Male": [pm, pms, ppvm, fprm]
+    }
+
+    fairness_metrics_rf_balanced = pd.DataFrame(fairness_metrics_rf_balanced)
+    fairness_metrics_rf_balanced = fairness_metrics_rf_balanced.set_index('No.')
+    st.dataframe(fairness_metrics_rf_balanced)
+
+    st.write(msg.FAIRNESS_BALANCED_DISCUSS_TITLE)
+    st.write(msg.FAIRNESS_DISCUSSION_BALANCED)
+
