@@ -23,6 +23,6 @@ You can watch the whole project in action by playing HCDS_screencast.mp4 file
 
 ## Deployed Project
 
-You can try out the deployed project in actin here : https://heart-disease-prediction-final.streamlit.app/
+You can try out the deployed project in action here : https://heart-disease-prediction-final.streamlit.app/
 
 No need to download the code, install in local machine, and then run to use this project
