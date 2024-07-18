@@ -16,3 +16,7 @@
 5. Enjoy
 
 NOTE: please write long strings constants into messages.py to keep the code cleaner, thanks
+
+## Video Demonstration
+
+You can watch the whole project in action by playing HCDS_screencast.mp4 file
