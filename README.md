@@ -20,3 +20,9 @@ NOTE: please write long strings constants into messages.py to keep the code clea
 ## Video Demonstration
 
 You can watch the whole project in action by playing HCDS_screencast.mp4 file
+
+## Deployed Project
+
+You can try out the deployed project in actin here : https://heart-disease-prediction-final.streamlit.app/
+
+No need to download the code, install in local machine, and then run to use this project
